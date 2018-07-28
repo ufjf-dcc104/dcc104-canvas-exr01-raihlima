@@ -10,9 +10,9 @@ function Foguete(cor){
   this.combustivel = 100;
   this.vida=3;
   this.imagem = new Image();
-  this.imagem.src = "Nave.png";
+  this.imagem.src = "Imagem/Nave.png";
   this.fogo = new Image();
-  this.fogo.src = "tiro.png";
+  this.fogo.src = "Imagem/tiro.png";
 
   this.somQuebrado = new Audio();
   this.somQuebrado.src = "Som/Crash.m4a";
@@ -65,6 +65,17 @@ Foguete.prototype.desenhar = function (ctx) {
   }else if(this.color == "Teal"){
     ctx.drawImage(this.imagem,400,0,204,267,this.x,this.y,this.width,this.height);
   }
+
+  console.log(this.vy);
+    if(this.vy<=100){
+      ctx.fillStyle = "green";
+
+    } else if( this.vy<150){
+      ctx.fillStyle = "yellow";
+    } else {
+      ctx.fillStyle = "red";
+    }
+    ctx.fillRect(this.x+this.width/2-5, this.y+this.height/2,10,10);
   //ctx.strokeStyle = "white";
 };
 

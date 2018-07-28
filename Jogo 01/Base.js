@@ -5,7 +5,7 @@ function Base(){
   this.height = 30;
   this.color = "blue";
   this.imagem = new Image();
-  this.imagem.src = "base.png";
+  this.imagem.src = "Imagem/base.png";
 }
 
 Base.prototype.desenhar = function (ctx) {

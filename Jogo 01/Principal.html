@@ -1,268 +1,257 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Jogo 01</title>
-    <script src="BarraStatus.js"></script>
-    <script src="Foguete.js"></script>
-    <script src="Base.js"></script>
-  </head>
-  <body>
-    <h1>Jogo 01</h1>
-    <canvas id="canvas" width="700" height="500"></canvas>
-    <script>
+<head>
+  <meta charset="utf-8">
+  <title>Jogo 01</title>
+  <script src="BarraStatus.js"></script>
+  <script src="Foguete.js"></script>
+  <script src="Base.js"></script>
+</head>
+<body>
+  <h1>Jogo 01</h1>
+  <canvas id="canvas" width="700" height="500"></canvas>
+  <script>
 
-      //Audio
-      var somFim = new Audio();
-      somFim.src = "Som/Fim.m4a";
-      somFim.load();
+  //Audio
+  var somFim = new Audio();
+  somFim.src = "Som/Fim.m4a";
+  somFim.load();
 
-      var somIni = new Audio();
-      somIni.src = "Som/Inicio.m4a";
-      somIni.load();
+  var somIni = new Audio();
+  somIni.src = "Som/Inicio.m4a";
+  somIni.load();
 
-      var somSel = new Audio();
-      somSel.src = "Som/Selecao.m4a";
-      somSel.load();
+  var somSel = new Audio();
+  somSel.src = "Som/Selecao.m4a";
+  somSel.load();
 
-      var somPouso = new Audio();
-      somPouso.src = "Som/Victory.m4a";
+  var somPouso = new Audio();
+  somPouso.src = "Som/Victory.m4a";
 
-      var somQuebrado = new Audio();
-      somQuebrado.src = "Som/Crash.m4a";
+  var somQuebrado = new Audio();
+  somQuebrado.src = "Som/Crash.m4a";
 
-      var somFogo = new Audio();
-      somFogo.src = "Som/Fire1.m4a";
+  var somFogo = new Audio();
+  somFogo.src = "Som/Fire1.m4a";
+
+  //tela
+  var canvas = document.getElementsByTagName("canvas")[0];
+  var ctx = canvas.getContext("2d");
+  var dt = anterior = 0;
+
+  var bg = new Image();
+  bg.src = "Imagem/bgJogo.png";
+
+  var fogueteS = 0;
+  var foguete;// = new Foguete();
+  var barra = new BarraStatus();
+  var base = new Base();
+
+  //Tela, gravidade do jogo, o numero da fase e o vento
+  var cenario = 0;
+  var fase = 1;
+  var gravidade = 0;
+  var vento = Math.random() * 100  - 50;
+
+  //Ponto obtido durante o Jogo
+  var pontoMax = 0;
+  var pontoAtual = 100;
+
+  var controleTempo = 0;
+
+  //Trocar de fase
+  function trocaFase(){
+    this.fase += 1;
+    this.controleTempo = 0;
+    //Tela de fase
+    this.vento = Math.random() * 100  - 50;
+    this.gravidade = 10.00*(fase)/2;
+    this.pontoAtual += Math.trunc(foguete.combustivel);
+    base.x = Math.floor(Math.random() * 600);
+    foguete.resetar();
+  }
+
+  function atualizar(t){
+    requestAnimationFrame(atualizar);
 
 
+    if(cenario == 0){
+      somIni.play();
+      var imagem = new Image();
+      imagem.src = "Imagem/bg.png";
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0, canvas.width, canvas.height);
 
+      ctx.drawImage(imagem,0,0);
+      ctx.strokeStyle = "Black";
 
+      ctx.textAlign = "center";
+      ctx.font = '70pt Arial';
+      ctx.fillStyle = "orange";
+      ctx.fillText("Moon Lander", 350, 150);
+      ctx.strokeText("Moon Lander", 350, 150);
+      ctx.font = '20pt Arial';
+      ctx.fillText("Pressione qualquer tecla para continuar", 350, 470);
 
-      //tela
-      var canvas = document.getElementsByTagName("canvas")[0];
-      var ctx = canvas.getContext("2d");
-      var dt = anterior = 0;
+    } else if (cenario == 1){
+      //somIni.pause();
+      var imagem = new Image();
+      imagem.src = "Imagem/Nave.png";
+      somIni.play();
 
-      var bg = new Image();
-      bg.src = "bgJogo.png";
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0, canvas.width, canvas.height);
 
-      var fogueteS = 0;
-      var foguete;// = new Foguete();
-      var barra = new BarraStatus();
-      var base = new Base();
+      ctx.drawImage(bg,0,0);
 
-      //Tela, gravidade do jogo, o numero da fase e o vento
-      var cenario = 0;
-      var fase = 1;
-      var gravidade = 0;
-      var vento = Math.random() * 100  - 50;
+      ctx.textAlign = "center";
+      ctx.font = '50pt Arial';
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "orange";
+      ctx.strokeText("Selecione a nave", 350, 150);
+      ctx.fillText("Selecione a nave", 350, 150);
+      ctx.font = '30pt Arial';
+      ctx.textAlign = "start";
 
-      //Ponto obtido durante o Jogo
-      var pontoMax = 0;
-      var pontoAtual = 100;
+      ctx.strokeStyle = "white";
+      //Naves
+      if(fogueteS == 0){
 
-      var controleTempo = 0;
-
-      //Trocar de fase
-      function trocaFase(){
-        this.fase += 1;
-
-        //Tela de fase
-        this.vento = Math.random() * 100  - 50;
-        this.gravidade = 20.00*(fase);
-        this.pontoAtual += Math.trunc(foguete.combustivel);
-        base.x = Math.floor(Math.random() * 600);
-        foguete.resetar();
+        ctx.strokeRect(90,290, 70, 80);
+      }  else if(fogueteS==1){
+        ctx.strokeRect(290,290, 70, 80);
+      }  else if(fogueteS==2){
+        ctx.strokeRect(490,290, 70, 80);
       }
 
-      function atualizar(t){
+      ctx.fillStyle = "green";
+      ctx.fillText("Verde", 70, 450);
+      //ctx.fillRect(100,300, 30, 30);
+      ctx.drawImage(imagem,0,0,204,267,100,300,50,60);
 
+      ctx.fillStyle = "wheat";
+      ctx.fillText("Areia", 275, 450);
+      ctx.drawImage(imagem,200,0,204,267,300,300,50,60);
+      //ctx.fillRect(300,300, 30, 30);
+      ctx.fillStyle = "teal";
+      ctx.fillText("Azul", 484, 450);
+      //ctx.fillRect(500,300, 30, 30);
+      ctx.drawImage(imagem,400,0,204,267,500,300,50,60);
 
-        if(cenario == 0){
-          somIni.play();
-          var imagem = new Image();
-          imagem.src = "bg.png";
-          ctx.fillStyle = "black";
-          ctx.fillRect(0,0, canvas.width, canvas.height);
+    } else if (cenario === 2){
+      //if(foguete.getVida()>-880){
+      somIni.play();
 
-          ctx.drawImage(imagem,0,0);
-          ctx.strokeStyle = "Black";
+      dt = (t - anterior)/1000;
 
-          ctx.textAlign = "center";
-          ctx.font = '70pt Arial';
-          ctx.fillStyle = "orange";
-          ctx.fillText("Moon Lander", 350, 150);
-          ctx.strokeText("Moon Lander", 350, 150);
-          ctx.font = '20pt Arial';
-          ctx.fillText("Pressione qualquer tecla para continuar", 350, 470);
+      //Gambiarra
+      if(foguete.s<10){
+        foguete.y= -10;
+      }
 
-          requestAnimationFrame(atualizar);
+      //Desenhar o fundo
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0, canvas.width, canvas.height);
 
+      ctx.drawImage(bg,0,0);
 
-        } else if (cenario == 1){
-          //somIni.pause();
-          var imagem = new Image();
-          imagem.src = "Nave.png";
-          somIni.play();
+      //Desenhar o Foguete, Barra e a Base
+      foguete.desenhar(ctx);
+      barra.desenhar(ctx, foguete.getVida(), this.pontoAtual, foguete.combustivel, foguete.getVy());
+      base.desenhar(ctx);
 
-
-
-          ctx.fillStyle = "black";
-          ctx.fillRect(0,0, canvas.width, canvas.height);
-
-          ctx.drawImage(bg,0,0);
-
-          ctx.textAlign = "center";
-          ctx.font = '50pt Arial';
-          ctx.strokeStyle = "black";
-          ctx.fillStyle = "orange";
-          ctx.strokeText("Selecione a nave", 350, 150);
-          ctx.fillText("Selecione a nave", 350, 150);
-          ctx.font = '30pt Arial';
-          ctx.textAlign = "start";
-
-          ctx.strokeStyle = "white";
-          //Naves
-          if(fogueteS == 0){
-
-            ctx.strokeRect(90,290, 70, 80);
-          }  else if(fogueteS==1){
-            ctx.strokeRect(290,290, 70, 80);
-          }  else if(fogueteS==2){
-            ctx.strokeRect(490,290, 70, 80);
-          }
-
-          ctx.fillStyle = "green";
-          ctx.fillText("Verde", 70, 450);
-          //ctx.fillRect(100,300, 30, 30);
-          ctx.drawImage(imagem,0,0,204,267,100,300,50,60);
-
-          ctx.fillStyle = "wheat";
-          ctx.fillText("Areia", 275, 450);
-          ctx.drawImage(imagem,200,0,204,267,300,300,50,60);
-          //ctx.fillRect(300,300, 30, 30);
-          ctx.fillStyle = "teal";
-          ctx.fillText("Azul", 484, 450);
-          //ctx.fillRect(500,300, 30, 30);
-          ctx.drawImage(imagem,400,0,204,267,500,300,50,60);
-
-          requestAnimationFrame(atualizar);
-
-        } else if (cenario === 2){
-        //if(foguete.getVida()>-880){
-        somIni.play();
-
-          dt = (t - anterior)/1000;
-
-          //Gambiarra
-          if(foguete.s<10){
-            foguete.y= -10;
-          }
-
-          //Desenhar o fundo
-          ctx.fillStyle = "black";
-          ctx.fillRect(0,0, canvas.width, canvas.height);
-
-          ctx.drawImage(bg,0,0);
-
-          //Desenhar o Foguete, Barra e a Base
-          foguete.desenhar(ctx);
-          barra.desenhar(ctx, foguete.getVida(), this.pontoAtual, foguete.combustivel, foguete.getVy());
-          base.desenhar(ctx);
-
-          //Teste colisao
-          foguete.atualizar(dt);
-          if(foguete.colisao(base)){
-            if (foguete.vy<150){
-            this.trocaFase();
-            somPouso.load();
-            somPouso.play();
-            //cenario=-1;
-          } else {
-            somQuebrado.load();
-            somQuebrado.play();
-            foguete.y=30;
-            foguete.resetar();
-            foguete.vida-=1;
-
-          }
-          }
-
-          if(foguete.vida<1){
-            cenario=3;
-            somFim.play();
-          }
-
-          anterior = t;
-          requestAnimationFrame(atualizar);
-        } else if (cenario ==3){
-          //Tela de Game Over
-        //  somFim.addEventListener("canplaythrough",function(){
-        somIni.pause();
-
-        //  });
-          //somFim.load();
-          ctx.textAlign = "center";
-          ctx.fillStyle = "black";
-          ctx.fillRect(0,0, canvas.width, canvas.height);
-
-          //Texto Game Over
-          ctx.fillStyle = "wheat";
-          ctx.font = '70pt Arial';
-          ctx.fillText("GAME OVER", 350, 150);
-          ctx.fillText("Pontuação: ", 350, 321);
-          ctx.fillText(pontoAtual, 350, 421);
-
-          anterior = t;
-          requestAnimationFrame(atualizar);
-        } else if (cenario == -1){
-          ctx.fillStyle = "black";
-          ctx.fillRect(0,0, canvas.width, canvas.height);
-          ctx.fillStyle = "wheat";
-          ctx.font = '70pt Arial';
-          ctx.fillText("Fase ", 70, 150);
-          ctx.fillText(fase, 290, 150);
-
-          var i;
-          for(i=0;i<2500;i++){
-            ctx.fillStyle = "black";
-            ctx.fillText(i, 370, 350);
-          }
-
-
-          cenario=2;
-          requestAnimationFrame(atualizar);
+      //Teste colisao
+      foguete.atualizar(dt);
+      if(foguete.colisao(base)){
+        if (foguete.vy<150){
+          somPouso.load();
+          somPouso.play();
+          cenario=-1;
+        } else {
+          somQuebrado.load();
+          somQuebrado.play();
+          foguete.y=30;
+          foguete.resetar();
+          foguete.vida-=1;
 
         }
-
       }
 
+      if(foguete.vida<1){
+        cenario=3;
+        somFim.play();
+      }
 
-      addEventListener("keydown", function (e) {
+      anterior = t;
+
+    } else if (cenario ==3){
+      //Tela de Game Over
+      //  somFim.addEventListener("canplaythrough",function(){
+      somIni.pause();
+
+      //  });
+      //somFim.load();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0, canvas.width, canvas.height);
+
+      //Texto Game Over
+      ctx.fillStyle = "wheat";
+      ctx.font = '70pt Arial';
+      ctx.fillText("GAME OVER", 350, 150);
+      ctx.fillText("Pontuação: ", 350, 321);
+      ctx.fillText(pontoAtual, 350, 421);
+
+      anterior = t;
+
+
+    } else if (cenario == -1){
+
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "wheat";
+      ctx.font = '70pt Arial';
+      ctx.textAlign = "center";
+      ctx.fillText("Fase ", 350, 150);
+      ctx.fillText(fase+1, 480, 150);
+
+      controleTempo=controleTempo + 1*dt;
+
+      if(controleTempo>1){
+        cenario=2;
+        this.trocaFase();
+      }
+    }
+
+  }
+
+
+  addEventListener("keydown", function (e) {
     switch (e.keyCode) {
       case 13://Enter
-        if(cenario==1){
+      if(cenario==1){
 
-          foguete= new Foguete (fogueteS);
-          //trocaFase();
-          cenario = 2;
-          break;
+        foguete= new Foguete (fogueteS);
+        //trocaFase();
+        cenario = 2;
+        break;
 
-        } else if(cenario==3){
-          cenario =2;
+      } else if(cenario==3){
+        cenario =2;
+      }
+      case 37: //Botão Esquerdo
+      if(cenario == 1){
+        if(fogueteS ==2 || fogueteS ==1){
+          fogueteS-=1;
+          somSel.load();
+          somSel.play();
         }
-        case 37: //Botão Esquerdo
-          if(cenario == 1){
-            if(fogueteS ==2 || fogueteS ==1){
-              fogueteS-=1;
-              somSel.load();
-              somSel.play();
-            }
-          }
-          if(cenario==2){
-            foguete.ax = -150*fase/2;
-            break;}
-            break;
+      }
+      if(cenario==2){
+        foguete.ax = -150*fase/2;
+        break;}
+        break;
         case 39: //Botão Direito
         if(cenario == 1){
           if(fogueteS == 0 || fogueteS == 1){
@@ -272,70 +261,70 @@
           }
         }
         if(cenario==2){
-            foguete.ax = 150*fase/2;
-            break;
-          }
+          foguete.ax = 150*fase/2;
           break;
+        }
+        break;
         case 38: //Botão Cima
         if(cenario==2){
-            if (foguete.getCombustivel() > 0.0) {
-                foguete.combustivel = foguete.combustivel - foguete.combustivel * dt;
-                foguete.ay = (-150)*fase/2;
-                //somFogo.load();
-                somFogo.play();
-            } else {
-                foguete.ay = 0;
-            }
-            break;
+          if (foguete.getCombustivel() > 0.0) {
+            foguete.combustivel = foguete.combustivel - foguete.combustivel * dt;
+            foguete.ay = (-150)*fase/2;
+            //somFogo.load();
+            somFogo.play();
+          } else {
+            foguete.ay = 0;
           }
+          break;
+        }
         default:
-          if(cenario==0){
-            cenario=1;
-          }  else if(cenario==3){
-              cenario=2;
-              fase=1;
-              foguete.vida=3;
-              foguete.resetar();
-          }
-    }
-});
-addEventListener("keyup", function (e) {
-    switch (e.keyCode) {
+        if(cenario==0){
+          cenario=1;
+        }  else if(cenario==3){
+          cenario=2;
+          fase=1;
+          foguete.vida=3;
+          foguete.resetar();
+        }
+      }
+    });
+    addEventListener("keyup", function (e) {
+      switch (e.keyCode) {
         case 37: //Botão Esquerdo
 
-          if(cenario==2){
-            foguete.ax = 0+vento;
-          } //-100*fase/2;
-            break;
+        if(cenario==2){
+          foguete.ax = 0+vento;
+        } //-100*fase/2;
+        break;
         case 39: //Botão Direito
 
         if(cenario==2){
-            foguete.ax = 0+vento;
-          } //-100*fase/2;
-            break;
+          foguete.ax = 0+vento;
+        } //-100*fase/2;
+        break;
         case 38: //Botão Cima
 
         if(cenario==2){
-            foguete.ay = 0;
-          }
-            break;
+          foguete.ay = 0;
+        }
+        break;
         default:
-          if(cenario==0){
+        if(cenario==0){
           cenario=1;
-          } else if(cenario==3){
-            foguete.vida=3;
-            foguete.resetar();
-            fase=0;
-            pontoAtual=0;
-            pontoMax=0;
-            cenario=2;
-            trocaFase(0);
-          }
-    }
-});
+        } else if(cenario==3){
+          foguete.vida=3;
+          foguete.resetar();
+          fase=0;
+          pontoAtual=0;
+          pontoMax=0;
+          cenario=2;
+          trocaFase(0);
+        }
+      }
+    });
 
 
-      requestAnimationFrame(atualizar);
+    requestAnimationFrame(atualizar);
     </script>
   </body>
-</html>
+  </html>
